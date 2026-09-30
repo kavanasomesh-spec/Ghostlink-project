@@ -19,7 +19,7 @@ stop_heartbeat = False
 
 
 def receive_messages(client):
-    data_left = ""
+    pending_data = ""
 
     try:
         while True:
@@ -28,10 +28,10 @@ def receive_messages(client):
             if not data:
                 break
 
-            data_left += data.decode()
+            pending_data += data.decode()
 
-            while "\n" in data_left:
-                message, data_left = data_left.split("\n", 1)
+            while "\n" in pending_data:
+                message, pending_data = pending_data.split("\n", 1)
                 message = message.strip()
 
                 if message:
@@ -78,9 +78,9 @@ try:
     heartbeat_thread.start()
 
     while True:
-        command = input("Type stop to stop heartbeat: ")
+        user_command = input("Type stop to stop heartbeat: ")
 
-        if command == "stop":
+        if user_command == "stop":
             stop_heartbeat = True
             print("Heartbeat stopped")
 
