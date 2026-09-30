@@ -4,24 +4,33 @@ import time
 from datetime import datetime
 
 
+
+
 ip = "127.0.0.1"
 port = 6000
 
+#Stores connected client nodes using the client name
 clients = {}
+
+#Stores the time when each client last sent a heartbeat
 last_seen = {}
+
+# Stores active, failed, or recovered status for each client
 statuses = {}
+# Stores clients that stopped sending heartbeats
 ghosts = set()
+# Prevents multiple threads from changing shared data at the same time
 lock = threading.Lock()
 
 
 def write_log(text):
-    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    line = now + " - " + text
+    print(text)
 
-    print(line)
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    log_line = now + " - " + text
 
     with open("ghostlink.log", "a") as file:
-        file.write(line + "\n")
+        file.write(log_line + "\n")
 
 
 def update_status(name, status):
@@ -47,7 +56,7 @@ def send_message(name, text):
     except:
         print("Could not send message")
 
-
+# Handles messages from one connected client
 def handle_client(client, address):
     name = None
     data_left = ""
@@ -79,6 +88,7 @@ def handle_client(client, address):
 
                         if statuses.get(name) == "FAILED":
                             update_status(name, "RECOVERED")
+                            write_log(name + " reconnected and is active again")
                         else:
                             update_status(name, "ACTIVE")
 
@@ -115,7 +125,7 @@ def handle_client(client, address):
 
         client.close()
 
-
+# Checks whether any client has stopped sending heartbeats
 def check_clients():
     while True:
         time.sleep(2)
