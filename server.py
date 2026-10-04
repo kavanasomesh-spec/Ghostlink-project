@@ -39,7 +39,7 @@ def update_status(name, status):
         statuses[name] = status
 
     if old_status != status:
-        write_log("Status changed: " + name + " -> " + status)
+        write_log("Status : " + name + " -> " + status)
 
 
 def send_message(name, text):
