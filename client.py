@@ -13,7 +13,7 @@ name = sys.argv[1]
 
 server_ip = "127.0.0.1"
 port = 6000
-heartbeat_time = 5
+heartbeat_time = 2
 
 stop_heartbeat = False
 
