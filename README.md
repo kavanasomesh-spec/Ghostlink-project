@@ -12,7 +12,7 @@ GhostLink is a TCP-based client heartbeat monitoring and ghost client detection 
 
 \- TCP client-server communication
 
-\- Client heartbeat every 5 seconds
+\- Client heartbeat every 2 seconds
 
 \- Server detects missing heartbeats after 10 seconds
 
