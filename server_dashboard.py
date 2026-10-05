@@ -6,8 +6,10 @@ import tkinter as tk
 from tkinter import ttk, scrolledtext, messagebox
 from datetime import datetime
 
+
 IP, PORT = "127.0.0.1", 6000
 TIMEOUT = 10
+
 
 clients = {}
 last_seen = {}
@@ -26,43 +28,106 @@ class Dashboard:
 
         root.title("GhostLink Server Dashboard")
         root.geometry("900x620")
+        root.configure(bg="#F4F7FA")
 
-        tk.Label(root, text="GHOSTLINK SERVER DASHBOARD",
-                 font=("Arial", 19, "bold")).pack(pady=12)
+        style = ttk.Style()
+        style.theme_use("clam")
+        style.configure(
+            "Treeview",
+            background="white",
+            fieldbackground="white",
+            foreground="#1F2937",
+            rowheight=25,
+            font=("Arial", 10)
+        )
+        style.configure(
+            "Treeview.Heading",
+            background="#1F4E79",
+            foreground="white",
+            font=("Arial", 10, "bold")
+        )
+
+        tk.Label(
+            root,
+            text="GHOSTLINK SERVER DASHBOARD",
+            font=("Arial", 19, "bold"),
+            fg="#1F4E79",
+            bg="#F4F7FA"
+        ).pack(pady=12)
 
         # Server section
-        top = tk.Frame(root)
+        top = tk.Frame(root, bg="#F4F7FA")
         top.pack(fill="x", padx=20)
 
         self.server_label = tk.Label(
-            top, text="Server: STOPPED", font=("Arial", 11, "bold")
+            top,
+            text="Server: STOPPED",
+            font=("Arial", 11, "bold"),
+            fg="#C0392B",
+            bg="#F4F7FA"
         )
         self.server_label.pack(side="left")
 
-        tk.Label(top, text=f"   {IP}:{PORT}").pack(side="left")
+        tk.Label(
+            top,
+            text=f"   {IP}:{PORT}",
+            bg="#F4F7FA",
+            fg="#374151"
+        ).pack(side="left")
 
-        tk.Button(top, text="Start Server",
-                  command=self.start).pack(side="right", padx=5)
+        tk.Button(
+            top,
+            text="Start Server",
+            command=self.start,
+            bg="#2E8B57",
+            fg="white",
+            activebackground="#236B43",
+            activeforeground="white",
+            relief="flat"
+        ).pack(side="right", padx=5)
 
-        tk.Button(top, text="Stop Server",
-                  command=self.stop).pack(side="right", padx=5)
+        tk.Button(
+            top,
+            text="Stop Server",
+            command=self.stop,
+            bg="#C0392B",
+            fg="white",
+            activebackground="#922B21",
+            activeforeground="white",
+            relief="flat"
+        ).pack(side="right", padx=5)
 
         # Counters
-        stats = tk.Frame(root)
+        stats = tk.Frame(root, bg="#F4F7FA")
         stats.pack(fill="x", padx=20, pady=12)
 
         self.stat_labels = []
+        stat_colours = ["#DCEAF7", "#DDF3E4", "#FFF0D6", "#F9D6D5"]
 
-        for text in ["Total: 0", "Active: 0",
-                     "Recovered: 0", "Failed: 0"]:
-            label = tk.Label(stats, text=text,
-                             relief="groove", pady=6)
-            label.pack(side="left", expand=True,
-                       fill="x", padx=3)
+        for text, colour in zip(
+            ["Total: 0", "Active: 0", "Recovered: 0", "Failed: 0"],
+            stat_colours
+        ):
+            label = tk.Label(
+                stats,
+                text=text,
+                relief="groove",
+                pady=6,
+                bg=colour,
+                fg="#1F2937",
+                font=("Arial", 9, "bold")
+            )
+            label.pack(side="left", expand=True, fill="x", padx=3)
             self.stat_labels.append(label)
 
         # Client table
-        frame = tk.LabelFrame(root, text="Client Status")
+        frame = tk.LabelFrame(
+            root,
+            text="Client Status",
+            bg="#F4F7FA",
+            fg="#1F4E79",
+            font=("Arial", 10, "bold")
+        )
         frame.pack(fill="x", padx=20)
 
         self.table = ttk.Treeview(
@@ -80,10 +145,20 @@ class Dashboard:
             self.table.heading(column, text=title)
             self.table.column(column, anchor="center")
 
+        self.table.tag_configure("ACTIVE", foreground="#1E7A3A")
+        self.table.tag_configure("FAILED", foreground="#C0392B")
+        self.table.tag_configure("RECOVERED", foreground="#D97706")
+
         self.table.pack(fill="x", padx=5, pady=5)
 
         # Send message
-        send_frame = tk.LabelFrame(root, text="Send Message")
+        send_frame = tk.LabelFrame(
+            root,
+            text="Send Message",
+            bg="#F4F7FA",
+            fg="#1F4E79",
+            font=("Arial", 10, "bold")
+        )
         send_frame.pack(fill="x", padx=20, pady=10)
 
         self.client_box = ttk.Combobox(
@@ -92,22 +167,37 @@ class Dashboard:
         self.client_box.pack(side="left", padx=5, pady=6)
 
         self.message = tk.Entry(send_frame)
-        self.message.pack(side="left", fill="x",
-                          expand=True, padx=5)
+        self.message.pack(side="left", fill="x", expand=True, padx=5)
 
-        tk.Button(send_frame, text="Send",
-                  command=self.send).pack(side="left", padx=5)
+        tk.Button(
+            send_frame,
+            text="Send",
+            command=self.send,
+            bg="#1F4E79",
+            fg="white",
+            activebackground="#163A5A",
+            activeforeground="white",
+            relief="flat"
+        ).pack(side="left", padx=5)
 
         # History
-        history_frame = tk.LabelFrame(root, text="Event History")
-        history_frame.pack(fill="both", expand=True,
-                           padx=20, pady=5)
+        history_frame = tk.LabelFrame(
+            root,
+            text="Event History",
+            bg="#F4F7FA",
+            fg="#1F4E79",
+            font=("Arial", 10, "bold")
+        )
+        history_frame.pack(fill="both", expand=True, padx=20, pady=5)
 
         self.history = scrolledtext.ScrolledText(
-            history_frame, state="disabled"
+            history_frame,
+            state="disabled",
+            bg="white",
+            fg="#1F2937",
+            font=("Consolas", 9)
         )
-        self.history.pack(fill="both", expand=True,
-                          padx=5, pady=5)
+        self.history.pack(fill="both", expand=True, padx=5, pady=5)
 
         root.protocol("WM_DELETE_WINDOW", self.close)
 
@@ -157,7 +247,8 @@ class Dashboard:
                     name,
                     status,
                     heartbeats.get(name, "--")
-                )
+                ),
+                tags=(status,)
             )
 
         active = list(data.values()).count("ACTIVE")
@@ -328,7 +419,10 @@ class Dashboard:
             return
 
         self.running = True
-        self.server_label.config(text="Server: RUNNING")
+        self.server_label.config(
+            text="Server: RUNNING",
+            fg="#1E7A3A"
+        )
 
         self.log(f"Server running on {IP} {PORT}")
 
@@ -364,7 +458,10 @@ class Dashboard:
             except:
                 pass
 
-        self.server_label.config(text="Server: STOPPED")
+        self.server_label.config(
+            text="Server: STOPPED",
+            fg="#C0392B"
+        )
         self.events.put("Server stopped")
 
     # ---------------- MESSAGE ----------------
