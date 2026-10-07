@@ -108,7 +108,7 @@ quit
 
 \- Server port: `6000`
 
-\- Heartbeat interval: 5 seconds
+\- Heartbeat interval: 2 seconds
 
 \- Failure timeout: 10 seconds
 
